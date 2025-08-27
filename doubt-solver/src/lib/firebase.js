@@ -3,14 +3,15 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// Firebase configuration - Replace with your actual config
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "your-api-key",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "your-app-id"
+  apiKey: "AIzaSyB9TnRmboaV0XECt0qBzVkufggQVl5fKYc",
+  authDomain: "learnly-63700.firebaseapp.com",
+  projectId: "learnly-63700",
+  storageBucket: "learnly-63700.firebasestorage.app",
+  messagingSenderId: "187007459423",
+  appId: "1:187007459423:web:f4b713a2471362bb007bea",
+  measurementId: "G-JMF3EKB9WW"
 };
 
 // Initialize Firebase
