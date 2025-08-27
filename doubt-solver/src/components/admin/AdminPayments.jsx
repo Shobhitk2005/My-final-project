@@ -9,7 +9,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   Eye, 
   Check, 

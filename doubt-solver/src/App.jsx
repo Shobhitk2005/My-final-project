@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Components
 import Landing from './components/landing/Landing';
@@ -19,9 +20,10 @@ import AdminDoubtDetail from './components/admin/AdminDoubtDetail';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="min-h-screen bg-gray-50">
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <div className="min-h-screen bg-gray-50">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Landing />} />
@@ -115,9 +117,10 @@ function App() {
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </div>
-      </AuthProvider>
-    </Router>
+          </div>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

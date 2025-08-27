@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { 
   collection, 
   query, 
-  where, 
   onSnapshot, 
   orderBy,
   limit,
@@ -12,7 +11,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   Users, 
   CreditCard, 

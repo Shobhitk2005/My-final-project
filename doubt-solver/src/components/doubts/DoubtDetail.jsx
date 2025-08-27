@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   doc, 
   getDoc, 
@@ -36,13 +36,13 @@ export default function DoubtDetail() {
   useEffect(() => {
     fetchDoubt();
     setupMessagesListener();
-  }, [doubtId]);
+  }, [doubtId, fetchDoubt, setupMessagesListener]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  const fetchDoubt = async () => {
+  const fetchDoubt = useCallback(async () => {
     try {
       const doubtDoc = await getDoc(doc(db, 'doubts', doubtId));
       if (doubtDoc.exists()) {
@@ -53,9 +53,9 @@ export default function DoubtDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [doubtId]);
 
-  const setupMessagesListener = () => {
+  const setupMessagesListener = useCallback(() => {
     const messagesQuery = query(
       collection(db, 'doubts', doubtId, 'messages'),
       orderBy('createdAt', 'asc')
@@ -70,7 +70,7 @@ export default function DoubtDetail() {
     });
 
     return () => unsubscribe();
-  };
+  }, [doubtId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

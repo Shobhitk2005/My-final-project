@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   collection, 
   query, 
@@ -32,9 +32,9 @@ export default function Dashboard() {
     if (currentUser) {
       fetchUserData();
     }
-  }, [currentUser]);
+  }, [currentUser, fetchUserData]);
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       // Fetch subscription status
       const paymentsQuery = query(
@@ -72,20 +72,9 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'approved':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+
 
   const getDoubtStatusColor = (status) => {
     switch (status) {

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   collection, 
   addDoc, 
@@ -43,9 +43,9 @@ export default function AskDoubt() {
 
   useEffect(() => {
     checkSubscriptionStatus();
-  }, [currentUser]);
+  }, [currentUser, checkSubscriptionStatus]);
 
-  const checkSubscriptionStatus = async () => {
+  const checkSubscriptionStatus = useCallback(async () => {
     if (!currentUser) return;
 
     try {
@@ -67,7 +67,7 @@ export default function AskDoubt() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
 
   const handleInputChange = (e) => {
     setFormData({

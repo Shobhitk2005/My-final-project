@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   collection, 
   query, 
@@ -26,9 +26,9 @@ export default function PaymentFlow() {
 
   useEffect(() => {
     fetchPaymentStatus();
-  }, [currentUser]);
+  }, [currentUser, fetchPaymentStatus]);
 
-  const fetchPaymentStatus = async () => {
+  const fetchPaymentStatus = useCallback(async () => {
     if (!currentUser) return;
 
     try {
@@ -52,7 +52,7 @@ export default function PaymentFlow() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
