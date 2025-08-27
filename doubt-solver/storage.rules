@@ -1,0 +1,53 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return request.auth != null && 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // Payment proofs: users can only upload to their own folder
+    match /paymentProofs/{userId}/{fileName} {
+      allow create: if isSignedIn() && request.auth.uid == userId
+                    && request.resource.size < 5 * 1024 * 1024 // 5MB limit
+                    && request.resource.contentType.matches('image/.*|application/pdf');
+      
+      allow read: if isSignedIn() && (
+        isAdmin() || 
+        request.auth.uid == userId
+      );
+      
+      allow update, delete: if false; // No updates or deletions
+    }
+
+    // Doubt images: users can only upload to their own doubt folders
+    match /doubts/{userId}/{doubtId}/{fileName} {
+      allow create: if isSignedIn() && request.auth.uid == userId
+                    && request.resource.size < 5 * 1024 * 1024 // 5MB limit
+                    && request.resource.contentType.matches('image/.*');
+      
+      allow read: if isSignedIn() && (
+        isAdmin() ||
+        request.auth.uid == userId
+      );
+      
+      allow update, delete: if false; // No updates or deletions
+    }
+
+    // Public files (like QR code)
+    match /public/{fileName} {
+      allow read: if true; // Anyone can read public files
+      allow write: if isAdmin(); // Only admin can upload public files
+    }
+
+    // Deny all other operations
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

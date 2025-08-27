@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc(uid) {
+      return get(/databases/$(database)/documents/users/$(uid));
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userDoc(request.auth.uid).data.role == "admin";
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Users collection: users can read/update their own basic profile (not role)
+    match /users/{uid} {
+      allow read: if isSignedIn() && (isAdmin() || request.auth.uid == uid);
+      allow create: if isSignedIn() && request.auth.uid == uid;
+      allow update: if isSignedIn() && request.auth.uid == uid
+                    && !("role" in request.resource.data); // prevent role escalation
+      allow delete: if false; // No user deletion allowed
+    }
+
+    // Payments: students can create & read only their own; only admin can set status/notes/review metadata
+    match /payments/{paymentId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == "pending"
+                    && !("reviewedAt" in request.resource.data)
+                    && !("reviewedBy" in request.resource.data);
+      
+      allow read: if isSignedIn() && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid
+      );
+      
+      allow update: if isAdmin() && (
+        // Admin can only update review-related fields
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(["status", "reviewedAt", "reviewedBy", "notes"])
+      );
+      
+      allow delete: if false; // No deletion allowed
+    }
+
+    // Doubts: students can create & read only their own; admin can read/update all
+    match /doubts/{doubtId} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == "open";
+      
+      allow read: if isSignedIn() && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid
+      );
+      
+      allow update: if (
+        // Students can only update basic fields of their own doubts
+        (isOwner(resource.data.userId) && 
+         request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(["title", "description", "images", "updatedAt"])) ||
+        // Admin can update any doubt
+        isAdmin()
+      );
+      
+      allow delete: if false; // No deletion allowed
+
+      // Messages subcollection
+      match /messages/{messageId} {
+        allow create: if isSignedIn() && (
+          // Students can only create messages in their own doubts
+          (resource.data.userId == request.auth.uid && 
+           request.resource.data.senderRole == "student") ||
+          // Admin can create messages in any doubt
+          (isAdmin() && request.resource.data.senderRole == "admin")
+        ) && request.resource.data.senderId == request.auth.uid;
+        
+        allow read: if isSignedIn() && (
+          isAdmin() ||
+          get(/databases/$(database)/documents/doubts/$(doubtId)).data.userId == request.auth.uid
+        );
+        
+        allow update, delete: if false; // No updates or deletions to messages
+      }
+    }
+
+    // Deny all other operations
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
