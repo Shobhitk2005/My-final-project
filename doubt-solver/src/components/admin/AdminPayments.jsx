@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminPayments() {
-  const { currentUser, isAdmin } = useAuth();
+  const { currentUser } = useAuth();
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboard() {
-  const { currentUser, isAdmin } = useAuth();
+  const { currentUser } = useAuth();
   const [stats, setStats] = useState({
     totalUsers: 0,
     pendingPayments: 0,

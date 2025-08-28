@@ -10,7 +10,7 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { useAuth } from '../../hooks/useAuth';
+// Direct admin access - no auth needed
 import AdminNav from './AdminNav';
 import { 
   Filter, 
@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminDoubts() {
-  const { isAdmin } = useAuth();
+  // Direct admin access - no auth needed
   const [doubts, setDoubts] = useState([]);
   const [filteredDoubts, setFilteredDoubts] = useState([]);
   const [loading, setLoading] = useState(true);

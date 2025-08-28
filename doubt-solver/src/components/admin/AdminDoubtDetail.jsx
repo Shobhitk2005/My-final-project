@@ -30,7 +30,7 @@ import {
 
 export default function AdminDoubtDetail() {
   const { doubtId } = useParams();
-  const { currentUser, isAdmin } = useAuth();
+  const { currentUser } = useAuth();
   const [doubt, setDoubt] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
