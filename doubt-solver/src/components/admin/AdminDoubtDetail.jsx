@@ -13,6 +13,7 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
+import AdminNav from './AdminNav';
 import { 
   ArrowLeft, 
   Send, 
@@ -179,17 +180,7 @@ export default function AdminDoubtDetail() {
     });
   };
 
-  if (!isAdmin) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
-          <XIcon className="h-12 w-12 text-red-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-red-800 mb-4">Access Denied</h2>
-          <p className="text-red-700">You don't have permission to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+  // Direct admin access - no auth check needed
 
   if (loading) {
     return (
@@ -206,7 +197,7 @@ export default function AdminDoubtDetail() {
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">Doubt not found</h3>
           <p className="text-gray-500 mb-4">This doubt may have been deleted.</p>
-          <Link to="/admin/doubts" className="btn-primary">
+          <Link to="/admin-2c9f7/doubts" className="btn-primary">
             Back to Doubts
           </Link>
         </div>
@@ -215,12 +206,14 @@ export default function AdminDoubtDetail() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Link to="/admin/doubts" className="text-gray-600 hover:text-gray-900">
-          <ArrowLeft className="h-6 w-6" />
-        </Link>
+    <div>
+      <AdminNav />
+      <div className="max-w-6xl mx-auto p-6">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <Link to="/admin-2c9f7/doubts" className="text-gray-600 hover:text-gray-900">
+            <ArrowLeft className="h-6 w-6" />
+          </Link>
         <h1 className="text-2xl font-bold text-gray-900 flex-1">{doubt.title}</h1>
         <div className="flex items-center gap-2">
           {getStatusIcon(doubt.status)}
@@ -450,6 +443,7 @@ export default function AdminDoubtDetail() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

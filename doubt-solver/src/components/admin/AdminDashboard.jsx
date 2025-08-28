@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../hooks/useAuth';
+import AdminNav from './AdminNav';
 import { 
   Users, 
   CreditCard, 
@@ -39,9 +40,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAdmin) return;
-    
-    // Set up real-time listeners
+    // Set up real-time listeners for direct admin access
     const unsubscribeUsers = setupUsersListener();
     const unsubscribePayments = setupPaymentsListener();
     const unsubscribeDoubts = setupDoubtsListener();
@@ -51,7 +50,7 @@ export default function AdminDashboard() {
       unsubscribePayments();
       unsubscribeDoubts();
     };
-  }, [isAdmin]);
+  }, []);
 
   const setupUsersListener = () => {
     const usersQuery = query(collection(db, 'users'));
@@ -132,17 +131,7 @@ export default function AdminDashboard() {
     });
   };
 
-  if (!isAdmin) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
-          <X className="h-12 w-12 text-red-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-red-800 mb-4">Access Denied</h2>
-          <p className="text-red-700">You don't have permission to access the admin panel.</p>
-        </div>
-      </div>
-    );
-  }
+  // Direct admin access - no auth check needed
 
   if (loading) {
     return (
@@ -153,17 +142,9 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      {/* Admin Header */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-        <div className="flex items-center gap-3">
-          <Users className="h-6 w-6 text-blue-600" />
-          <div>
-            <h1 className="text-2xl font-bold text-blue-800">Admin Dashboard</h1>
-            <p className="text-blue-600">You are logged in as Administrator</p>
-          </div>
-        </div>
-      </div>
+    <div>
+      <AdminNav />
+      <div className="max-w-7xl mx-auto p-6">
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
@@ -203,7 +184,7 @@ export default function AdminDashboard() {
         <div className="card">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Recent Payments</h2>
-            <Link to="/admin/payments" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            <Link to="/admin-2c9f7/payments" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
               View All
             </Link>
           </div>
@@ -267,7 +248,7 @@ export default function AdminDashboard() {
         <div className="card">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold text-gray-900">Recent Doubts</h2>
-            <Link to="/admin/doubts" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            <Link to="/admin-2c9f7/doubts" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
               View All
             </Link>
           </div>
@@ -297,7 +278,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center gap-3">
                       <span className="capitalize">{doubt.subject}</span>
                       <Link
-                        to={`/admin/doubts/${doubt.id}`}
+                        to={`/admin-2c9f7/doubts/${doubt.id}`}
                         className="text-blue-600 hover:text-blue-700"
                       >
                         <ExternalLink className="h-3 w-3" />
@@ -309,6 +290,7 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

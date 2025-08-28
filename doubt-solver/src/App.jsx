@@ -80,38 +80,22 @@ function App() {
               } 
             />
             
-            {/* Protected Admin Routes */}
+            {/* Direct Admin Routes (No Auth Required) */}
             <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute adminOnly>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } 
+              path="/admin-2c9f7" 
+              element={<AdminDashboard />} 
             />
             <Route 
-              path="/admin/payments" 
-              element={
-                <ProtectedRoute adminOnly>
-                  <AdminPayments />
-                </ProtectedRoute>
-              } 
+              path="/admin-2c9f7/payments" 
+              element={<AdminPayments />} 
             />
             <Route 
-              path="/admin/doubts" 
-              element={
-                <ProtectedRoute adminOnly>
-                  <AdminDoubts />
-                </ProtectedRoute>
-              } 
+              path="/admin-2c9f7/doubts" 
+              element={<AdminDoubts />} 
             />
             <Route 
-              path="/admin/doubts/:doubtId" 
-              element={
-                <ProtectedRoute adminOnly>
-                  <AdminDoubtDetail />
-                </ProtectedRoute>
-              } 
+              path="/admin-2c9f7/doubts/:doubtId" 
+              element={<AdminDoubtDetail />} 
             />
             
             {/* Catch all route */}

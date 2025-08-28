@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../hooks/useAuth';
+import AdminNav from './AdminNav';
 import { 
   Eye, 
   Check, 
@@ -32,8 +33,7 @@ export default function AdminPayments() {
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
-    if (!isAdmin) return;
-    
+    // Direct admin access - load payments immediately
     const paymentsQuery = query(
       collection(db, 'payments'),
       orderBy('createdAt', 'desc')
@@ -49,7 +49,7 @@ export default function AdminPayments() {
     });
 
     return () => unsubscribe();
-  }, [isAdmin]);
+  }, []);
 
   useEffect(() => {
     let filtered = payments;
@@ -117,17 +117,7 @@ export default function AdminPayments() {
     }
   };
 
-  if (!isAdmin) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-8 text-center">
-          <X className="h-12 w-12 text-red-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold text-red-800 mb-4">Access Denied</h2>
-          <p className="text-red-700">You don't have permission to access this page.</p>
-        </div>
-      </div>
-    );
-  }
+  // Direct admin access - no auth check needed
 
   if (loading) {
     return (
@@ -138,8 +128,10 @@ export default function AdminPayments() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Payment Management</h1>
+    <div>
+      <AdminNav />
+      <div className="max-w-7xl mx-auto p-6">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Payment Management</h1>
       
       {/* Filters and Search */}
       <div className="card mb-6">
@@ -333,6 +325,7 @@ export default function AdminPayments() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
